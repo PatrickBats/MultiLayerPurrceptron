@@ -1,5 +1,6 @@
-# Ignore all images in the Kaggleset directory
-Datacleaning/Kaggleset/images/
+# Ignore all images and data in the Kaggleset directory
+Datacleaning/Kaggle/images/
+Datacleaning/Kaggle/data/
 
 # Python
 __pycache__/
