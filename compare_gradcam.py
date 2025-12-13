@@ -1,10 +1,3 @@
-"""
-Compare GradCAM Visualizations: From-Scratch vs Transfer Learning
-
-Creates a 3×5 grid showing 3 different breeds with both models' GradCAM visualizations.
-Each row shows one breed with: Original, FS Heatmap, FS Overlay, TL Heatmap, TL Overlay
-"""
-
 import sys
 from pathlib import Path
 
@@ -21,7 +14,6 @@ from shared.models import CatCNN
 
 
 class GradCAM:
-    """GradCAM implementation"""
 
     def __init__(self, model, target_layer):
         self.model = model
@@ -72,7 +64,6 @@ class GradCAM:
 
 
 def load_from_scratch_model():
-    """Load from-scratch CNN model"""
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     checkpoint_path = Path('from_scratch/experiments/from_scratch_5layer/checkpoints/best.pth')
 
@@ -89,7 +80,6 @@ def load_from_scratch_model():
 
 
 def load_transfer_model():
-    """Load transfer learning ResNet50 model"""
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     checkpoint_path = Path('transfer_learning/experiments/resnet50_transfer/checkpoints/best.pth')
 
@@ -120,7 +110,6 @@ def load_transfer_model():
 
 
 def get_transforms():
-    """Get preprocessing transforms"""
     return transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),

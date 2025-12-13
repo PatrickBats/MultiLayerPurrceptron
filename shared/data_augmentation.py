@@ -1,25 +1,11 @@
-"""
-Data Augmentation Pipeline for Cat Breed Classification
-
-Provides two augmentation strategies:
-1. HEAVY augmentation for from-scratch training (prevents overfitting)
-2. MODERATE augmentation for transfer learning
-"""
-
 import torch
 from torchvision import transforms
 import numpy as np
 
 
 class CatBreedAugmentation:
-    """Data augmentation configurations for cat breed classification"""
 
     def __init__(self, mode='from_scratch', image_size=224):
-        """
-        Args:
-            mode: 'from_scratch' or 'transfer_learning'
-            image_size: Target image size (default 224 for ResNet compatibility)
-        """
         self.mode = mode
         self.image_size = image_size
 
@@ -34,10 +20,6 @@ class CatBreedAugmentation:
         self.val_transform = self._get_val_transform()
 
     def _get_heavy_augmentation(self):
-        """
-        Heavy augmentation for from-scratch training.
-        Prevents overfitting on limited data.
-        """
         return transforms.Compose([
             # Resize and crop
             transforms.Resize((int(self.image_size * 1.1), int(self.image_size * 1.1))),
@@ -79,10 +61,6 @@ class CatBreedAugmentation:
         ])
 
     def _get_moderate_augmentation(self):
-        """
-        Moderate augmentation for transfer learning.
-        Pre-trained models need less aggressive augmentation.
-        """
         return transforms.Compose([
             # Resize and crop
             transforms.Resize((int(self.image_size * 1.1), int(self.image_size * 1.1))),
@@ -111,10 +89,6 @@ class CatBreedAugmentation:
         ])
 
     def _get_val_transform(self):
-        """
-        Validation/test transforms.
-        No augmentation, just resize and normalize.
-        """
         return transforms.Compose([
             transforms.Resize((self.image_size, self.image_size)),
             transforms.ToTensor(),
@@ -125,11 +99,9 @@ class CatBreedAugmentation:
         ])
 
     def get_train_transform(self):
-        """Get training augmentation pipeline"""
         return self.train_transform
 
     def get_val_transform(self):
-        """Get validation/test pipeline"""
         return self.val_transform
 
     def __repr__(self):
@@ -137,14 +109,6 @@ class CatBreedAugmentation:
 
 
 def visualize_augmentations(image_path, num_samples=5, mode='from_scratch'):
-    """
-    Visualize augmentations on a sample image.
-
-    Args:
-        image_path: Path to image file
-        num_samples: Number of augmented samples to show
-        mode: 'from_scratch' or 'transfer_learning'
-    """
     from PIL import Image
     import matplotlib.pyplot as plt
 

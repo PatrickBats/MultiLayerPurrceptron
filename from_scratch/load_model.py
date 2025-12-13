@@ -1,5 +1,3 @@
-
-
 import torch
 from PIL import Image
 import torch.nn.functional as F
@@ -14,14 +12,6 @@ from shared.data_augmentation import CatBreedAugmentation
 
 
 def load_model(checkpoint_path='experiments/from_scratch_5layer/checkpoints/best.pth'):
-    """
-    Load trained model from checkpoint
-
-    Returns:
-        model: Loaded model
-        breed_names: List of breed names
-        config: Training configuration
-    """
     # Load checkpoint
     checkpoint = torch.load(checkpoint_path, map_location='cpu')
 
@@ -47,20 +37,6 @@ def load_model(checkpoint_path='experiments/from_scratch_5layer/checkpoints/best
 
 
 def predict_image(image_path, model, breed_names, device='cpu'):
-    """
-    Predict breed for a single image
-
-    Args:
-        image_path: Path to cat image
-        model: Trained model
-        breed_names: List of breed names
-        device: 'cpu' or 'cuda'
-
-    Returns:
-        predicted_breed: Breed name
-        confidence: Confidence score (0-1)
-        all_probs: Probabilities for all breeds
-    """
     model = model.to(device)
 
     aug = CatBreedAugmentation(mode='from_scratch')

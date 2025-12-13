@@ -1,14 +1,3 @@
-"""
-GradCAM Visualization for ResNet50 Transfer Learning Model
-
-Automatically selects random images from each breed and generates GradCAM heatmaps
-showing what regions the model focuses on.
-
-Usage:
-    cd transfer_learning
-    python visualize_gradcam.py
-"""
-
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
@@ -26,7 +15,6 @@ from load_model import load_model
 
 
 class GradCAM:
-    """GradCAM implementation for ResNet50"""
 
     def __init__(self, model, target_layer):
         self.model = model
@@ -39,24 +27,12 @@ class GradCAM:
         self.target_layer.register_backward_hook(self.save_gradient)
 
     def save_activation(self, module, input, output):
-        """Hook to save forward pass activations"""
         self.activations = output.detach()
 
     def save_gradient(self, module, grad_input, grad_output):
-        """Hook to save backward pass gradients"""
         self.gradients = grad_output[0].detach()
 
     def generate_cam(self, input_image, target_class):
-        """
-        Generate GradCAM heatmap for target class
-
-        Args:
-            input_image: Preprocessed image tensor [1, 3, H, W]
-            target_class: Target class index
-
-        Returns:
-            cam: GradCAM heatmap [H, W]
-        """
         # Forward pass
         output = self.model(input_image)
 
@@ -90,7 +66,6 @@ class GradCAM:
 
 
 def get_transforms():
-    """Get preprocessing transforms"""
     return transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
@@ -100,23 +75,12 @@ def get_transforms():
 
 
 def denormalize(tensor):
-    """Denormalize image tensor for visualization"""
     mean = torch.tensor([0.485, 0.456, 0.406]).view(3, 1, 1)
     std = torch.tensor([0.229, 0.224, 0.225]).view(3, 1, 1)
     return tensor * std + mean
 
 
 def visualize_gradcam(image_path, model, breed_names, gradcam, output_path):
-    """
-    Generate and save GradCAM visualization
-
-    Args:
-        image_path: Path to input image
-        model: Trained model
-        breed_names: List of breed names
-        gradcam: GradCAM instance
-        output_path: Path to save visualization
-    """
     device = next(model.parameters()).device
     transform = get_transforms()
 
@@ -165,8 +129,6 @@ def visualize_gradcam(image_path, model, breed_names, gradcam, output_path):
 
 
 def main():
-    """Generate GradCAM visualizations for random images from each breed"""
-
     print("Loading model...")
     model, breed_names, config = load_model()
 

@@ -1,14 +1,3 @@
-"""
-Transfer Learning Training Script - ResNet50 Fine-Tuning on Cat Breeds
-
-This script fine-tunes a pretrained ResNet50 (ImageNet weights) on cat breed classification.
-Expected to achieve ~85-95% accuracy with much faster training than from-scratch.
-
-Usage:
-    cd transfer_learning
-    python train.py
-"""
-
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
@@ -58,7 +47,6 @@ class TransferLearningTrainer:
         }
 
     def _build_model(self):
-        """Load pretrained ResNet50 and modify for cat breeds"""
         print("\nLoading pretrained ResNet50...")
         self.model = models.resnet50(pretrained=True)
 
@@ -87,7 +75,6 @@ class TransferLearningTrainer:
         print(f"Trainable parameters: {trainable_params:,}")
 
     def _setup_data(self):
-        """Setup datasets and dataloaders"""
         base_dir = Path(__file__).parent.parent / 'data'
 
         # Create datasets with transfer learning augmentation (moderate)
@@ -127,7 +114,6 @@ class TransferLearningTrainer:
         print(f"  Batches per epoch: {len(self.train_loader)}")
 
     def _setup_training(self):
-        """Setup loss, optimizer, and scheduler"""
         self.criterion = nn.CrossEntropyLoss()
 
         # Lower learning rate for fine-tuning
@@ -150,7 +136,6 @@ class TransferLearningTrainer:
         self.scaler = torch.cuda.amp.GradScaler() if self.device.type == 'cuda' else None
 
     def train_epoch(self, epoch):
-        """Train for one epoch"""
         self.model.train()
         running_loss = 0.0
         correct = 0
@@ -197,7 +182,6 @@ class TransferLearningTrainer:
         return epoch_loss, epoch_acc
 
     def validate(self):
-        """Validate the model"""
         self.model.eval()
         running_loss = 0.0
         correct = 0
@@ -222,7 +206,6 @@ class TransferLearningTrainer:
         return val_loss, val_acc
 
     def save_checkpoint(self, epoch, is_best=False):
-        """Save model checkpoint"""
         checkpoint = {
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
@@ -240,13 +223,11 @@ class TransferLearningTrainer:
             print(f"  ✓ Saved best model (val_acc: {self.metrics['best_val_acc']:.2f}%)")
 
     def save_metrics(self):
-        """Save training metrics to JSON"""
         metrics_file = self.experiment_dir / 'metrics.json'
         with open(metrics_file, 'w') as f:
             json.dump(self.metrics, f, indent=2)
 
     def train(self):
-        """Main training loop"""
         print(f"\n{'='*60}")
         print(f"Starting Transfer Learning Training - {self.config['experiment_name']}")
         print(f"{'='*60}\n")
@@ -303,8 +284,6 @@ class TransferLearningTrainer:
 
 
 def main():
-    """Main training script"""
-
     # Training configuration
     config = {
         'experiment_name': 'resnet50_transfer',

@@ -1,9 +1,3 @@
-"""
-Generate and Visualize Confusion Matrix for From-Scratch CNN Model
-
-Creates a heatmap showing which breeds are confused with each other.
-"""
-
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
@@ -23,7 +17,6 @@ from shared.data_augmentation import CatBreedAugmentation
 
 
 def load_model(checkpoint_path, num_classes=8):
-    """Load trained model from checkpoint"""
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     checkpoint = torch.load(checkpoint_path, map_location=device)
@@ -46,7 +39,6 @@ def load_model(checkpoint_path, num_classes=8):
 
 
 def compute_confusion_matrix(model, dataloader, device, num_classes=8):
-    """Compute confusion matrix"""
     confusion_matrix = np.zeros((num_classes, num_classes), dtype=int)
 
     with torch.no_grad():
@@ -66,8 +58,6 @@ def compute_confusion_matrix(model, dataloader, device, num_classes=8):
 
 
 def plot_confusion_matrix(confusion_matrix, breed_names, output_path, normalize=False):
-    """Plot and save confusion matrix heatmap"""
-
     if normalize:
         # Normalize by row (true label) to show percentages
         confusion_matrix_norm = confusion_matrix.astype('float') / confusion_matrix.sum(axis=1)[:, np.newaxis]
@@ -111,10 +101,6 @@ def plot_confusion_matrix(confusion_matrix, breed_names, output_path, normalize=
 
 
 def analyze_confusions(confusion_matrix, breed_names):
-    """Analyze most confused pairs"""
-    print("\n" + "=" * 60)
-    print("=" * 60)
-
     # Find most confused pairs (excluding diagonal)
     confusion_pairs = []
     for i in range(len(breed_names)):
@@ -130,17 +116,8 @@ def analyze_confusions(confusion_matrix, breed_names):
     # Sort by count
     confusion_pairs.sort(key=lambda x: x[2], reverse=True)
 
-    print("-" * 60)
-    print(f"{'True Breed':<20} {'Predicted As':<20} {'Count':<8} {'%':<8}")
-    print("-" * 60)
     for true_breed, pred_breed, count, percentage in confusion_pairs[:10]:
         print(f"{true_breed:<20} {pred_breed:<20} {count:<8} {percentage:>6.1f}%")
-
-    # Per-class accuracy
-    print("\n" + "=" * 60)
-    print("=" * 60)
-    print(f"{'Breed':<20} {'Correct':<10} {'Total':<10} {'Accuracy':<10}")
-    print("-" * 60)
 
     accuracies = []
     for i, breed in enumerate(breed_names):
@@ -157,12 +134,6 @@ def analyze_confusions(confusion_matrix, breed_names):
 
 
 def main():
-    """Main function"""
-
-    print("=" * 60)
-    print("CONFUSION MATRIX VISUALIZATION - FROM-SCRATCH CNN")
-    print("=" * 60)
-
     # Paths
     checkpoint_path = Path('experiments/from_scratch_5layer/checkpoints/best.pth')
     output_dir = Path('experiments/from_scratch_5layer')
@@ -238,10 +209,7 @@ def main():
     # Analyze confusions
     confusion_pairs = analyze_confusions(confusion_matrix, breed_names)
 
-    print("\n" + "=" * 60)
-    print("=" * 60)
-    print(f"\nOutput files saved to: {output_dir}")
-    print(f"  - confusion_matrix.json (data)")
+
 
 
 if __name__ == "__main__":

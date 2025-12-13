@@ -1,17 +1,3 @@
-"""
-Load and use trained ResNet50 transfer learning model for inference
-
-Usage:
-    from load_model import load_model, predict_image
-
-    # Load model
-    model, breed_names, config = load_model()
-
-    # Make prediction
-    breed, confidence, probs = predict_image('path/to/cat.jpg', model, breed_names)
-    print(f"Predicted: {breed} ({confidence:.2%})")
-"""
-
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
@@ -24,17 +10,6 @@ import json
 
 
 def load_model(checkpoint_path=None):
-    """
-    Load trained ResNet50 transfer learning model
-
-    Args:
-        checkpoint_path: Path to checkpoint file. If None, uses best.pth
-
-    Returns:
-        model: Loaded model in eval mode
-        breed_names: List of breed names
-        config: Training configuration
-    """
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     # Default checkpoint path
@@ -73,7 +48,6 @@ def load_model(checkpoint_path=None):
 
 
 def get_transforms():
-    """Get preprocessing transforms for inference (same as validation)"""
     return transforms.Compose([
         transforms.Resize((224, 224)),
         transforms.ToTensor(),
@@ -83,19 +57,6 @@ def get_transforms():
 
 
 def predict_image(image_path, model, breed_names):
-    """
-    Predict cat breed for a single image
-
-    Args:
-        image_path: Path to image file
-        model: Loaded model
-        breed_names: List of breed names
-
-    Returns:
-        predicted_breed: Name of predicted breed
-        confidence: Confidence score (0-1)
-        all_probs: Dictionary of all breed probabilities
-    """
     device = next(model.parameters()).device
     transform = get_transforms()
 
@@ -119,18 +80,6 @@ def predict_image(image_path, model, breed_names):
 
 
 def predict_batch(image_paths, model, breed_names, batch_size=32):
-    """
-    Predict cat breeds for multiple images
-
-    Args:
-        image_paths: List of image paths
-        model: Loaded model
-        breed_names: List of breed names
-        batch_size: Batch size for processing
-
-    Returns:
-        results: List of (image_path, predicted_breed, confidence) tuples
-    """
     device = next(model.parameters()).device
     transform = get_transforms()
     results = []
@@ -162,8 +111,6 @@ def predict_batch(image_paths, model, breed_names, batch_size=32):
 
 
 def main():
-    """Demo: Load model and make predictions"""
-
     # Load model
     model, breed_names, config = load_model()
 

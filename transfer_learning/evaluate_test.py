@@ -1,9 +1,3 @@
-"""
-Evaluate Transfer Learning Model on Test Set
-
-Loads the best checkpoint and evaluates on held-out test data.
-"""
-
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
@@ -23,7 +17,6 @@ from shared.data_augmentation import CatBreedAugmentation
 
 
 class TransferLearningEvaluator:
-    """Evaluate trained transfer learning model on test set"""
 
     def __init__(self, checkpoint_path=None):
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -41,7 +34,6 @@ class TransferLearningEvaluator:
         self.num_classes = len(self.breed_names)
 
     def load_model(self):
-        """Load trained model from checkpoint"""
         print("\n" + "=" * 60)
         print("LOADING TRAINED MODEL")
         print("=" * 60)
@@ -64,7 +56,6 @@ class TransferLearningEvaluator:
         print(f"Best validation accuracy: {checkpoint['metrics']['best_val_acc']:.2f}%")
 
     def setup_data(self, batch_size=64, num_workers=4):
-        """Setup test dataset"""
         print("\n" + "=" * 60)
         print("SETTING UP TEST DATA")
         print("=" * 60)
@@ -90,7 +81,6 @@ class TransferLearningEvaluator:
         print(f"Breeds: {', '.join(self.breed_names)}")
 
     def evaluate(self):
-        """Evaluate model on test set"""
         print("\n" + "=" * 60)
         print("EVALUATING ON TEST SET")
         print("=" * 60)
@@ -223,8 +213,6 @@ class TransferLearningEvaluator:
 
 
 def main():
-    """Main evaluation function"""
-
     print("=" * 60)
     print("TRANSFER LEARNING MODEL - TEST SET EVALUATION")
     print("=" * 60)

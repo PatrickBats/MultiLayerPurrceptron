@@ -1,7 +1,3 @@
-"""
-Trains 5-layer CNN from scratch for cat breed classification.
-"""
-
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -20,7 +16,6 @@ from shared.data_augmentation import CatBreedAugmentation
 
 
 class FromScratchTrainer:
-    """Training manager for from-scratch CNN"""
 
     def __init__(self, config):
         self.config = config
@@ -46,11 +41,6 @@ class FromScratchTrainer:
         self.epochs_without_improvement = 0
 
     def setup_data(self):
-        """Setup datasets and dataloaders"""
-        print("\n" + "=" * 60)
-        print("SETTING UP DATA")
-        print("=" * 60)
-
         aug = CatBreedAugmentation(mode='from_scratch', image_size=self.config['image_size'])
 
         base_dir = Path(__file__).parent.parent / 'data'
@@ -99,11 +89,6 @@ class FromScratchTrainer:
         )
 
     def setup_model(self):
-        """Setup model, loss, optimizer, and scheduler"""
-        print("\n" + "=" * 60)
-        print("SETTING UP MODEL")
-        print("=" * 60)
-
         self.model = CatCNN(
             num_classes=len(self.train_dataset.breeds),
             dropout_rate=self.config['dropout_rate']
@@ -164,7 +149,6 @@ class FromScratchTrainer:
             print("Mixed precision: Enabled (FP16)")
 
     def train_epoch(self, epoch):
-        """Train for one epoch"""
         self.model.train()
         running_loss = 0.0
         correct = 0
@@ -207,7 +191,6 @@ class FromScratchTrainer:
         return epoch_loss, epoch_acc
 
     def validate(self):
-        """Validate on validation set"""
         self.model.eval()
         running_loss = 0.0
         correct = 0
@@ -232,7 +215,6 @@ class FromScratchTrainer:
         return val_loss, val_acc
 
     def save_checkpoint(self, epoch, is_best=False):
-        """Save model checkpoint"""
         checkpoint = {
             'epoch': epoch,
             'model_state_dict': self.model.state_dict(),
@@ -253,8 +235,6 @@ class FromScratchTrainer:
             print(f"💾 Saved best model (val_acc: {self.best_val_acc:.2f}%)")
 
     def train(self):
-       
-
         start_time = time.time()
 
         for epoch in range(1, self.config['epochs'] + 1):
@@ -305,14 +285,12 @@ class FromScratchTrainer:
         self.save_metrics()
 
     def save_metrics(self):
-        """Save training metrics to JSON"""
         metrics_path = self.output_dir / 'metrics.json'
         with open(metrics_path, 'w') as f:
             json.dump(self.metrics, f, indent=2)
         print(f"\n aved metrics to {metrics_path}")
 
     def test(self):
-
         # Load best model
         best_checkpoint = torch.load(self.checkpoint_dir / 'best.pth')
         self.model.load_state_dict(best_checkpoint['model_state_dict'])
@@ -339,8 +317,6 @@ class FromScratchTrainer:
 
 
 def main():
-    """Main training function"""
-
     # Configuration
     config = {
         # Model
@@ -367,8 +343,6 @@ def main():
         'output_dir': 'experiments/from_scratch_5layer'
     }
 
-    
- 
     for key, value in config.items():
         print(f"  {key:20s}: {value}")
 

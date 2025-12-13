@@ -1,7 +1,3 @@
-"""
-PyTorch Dataset for Cat Breed Classification
-"""
-
 import pandas as pd
 import torch
 from torch.utils.data import Dataset
@@ -10,19 +6,8 @@ import os
 
 
 class CatBreedDataset(Dataset):
-    """
-    Cat Breed Dataset for PyTorch DataLoader.
-
-    Loads images from CSV file containing breed and filepath information.
-    """
 
     def __init__(self, csv_file, transform=None, root_dir=None):
-        """
-        Args:
-            csv_file: Path to CSV file with columns: breed, filename, source
-            transform: Optional transform to apply to images
-            root_dir: Root directory containing Datacleaning folder (default: auto-detect from csv_file)
-        """
         self.data = pd.read_csv(csv_file)
         self.transform = transform
 
@@ -42,17 +27,9 @@ class CatBreedDataset(Dataset):
         self.idx_to_breed = {idx: breed for breed, idx in self.breed_to_idx.items()}
 
     def __len__(self):
-        """Return total number of samples"""
         return len(self.data)
 
     def __getitem__(self, idx):
-        """
-        Get single sample.
-
-        Returns:
-            image: Transformed image tensor
-            label: Breed class index
-        """
         from pathlib import Path
 
         # Get image info
@@ -87,11 +64,9 @@ class CatBreedDataset(Dataset):
         return image, label
 
     def get_breed_name(self, idx):
-        """Get breed name from class index"""
         return self.idx_to_breed[idx]
 
     def get_breed_distribution(self):
-        """Get distribution of breeds in dataset"""
         return self.data['breed'].value_counts().sort_index()
 
 

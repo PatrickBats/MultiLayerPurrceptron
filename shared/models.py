@@ -1,30 +1,9 @@
-"""
-CNN Models for Cat Breed Classification
-
-Contains:
-1. CatCNN - 5-layer from-scratch CNN
-2. ResNetTransfer - Transfer learning with ResNet50
-"""
-
 import torch
 import torch.nn as nn
 import torchvision.models as models
 
 
 class CatCNN(nn.Module):
-    """
-    5-Layer CNN trained from scratch for cat breed classification.
-
-    Architecture:
-    - Conv1: 64 filters (3x3) -> BN -> ReLU -> MaxPool
-    - Conv2: 128 filters (3x3) -> BN -> ReLU -> MaxPool
-    - Conv3: 256 filters (3x3) -> BN -> ReLU -> MaxPool
-    - Conv4: 512 filters (3x3) -> BN -> ReLU -> MaxPool
-    - Conv5: 512 filters (3x3) -> BN -> ReLU -> MaxPool
-    - FC1: 1024 -> Dropout(0.5) -> ReLU
-    - FC2: 512 -> Dropout(0.3) -> ReLU
-    - Output: num_classes (softmax via CrossEntropyLoss)
-    """
 
     def __init__(self, num_classes=8, dropout_rate=0.5):
         super(CatCNN, self).__init__()
@@ -88,7 +67,6 @@ class CatCNN(nn.Module):
         self._initialize_weights()
 
     def _initialize_weights(self):
-        """Initialize weights using He initialization for ReLU networks"""
         for m in self.modules():
             if isinstance(m, nn.Conv2d):
                 nn.init.kaiming_normal_(m.weight, mode='fan_out', nonlinearity='relu')
@@ -102,7 +80,6 @@ class CatCNN(nn.Module):
                 nn.init.constant_(m.bias, 0)
 
     def forward(self, x):
-        """Forward pass"""
         x = self.conv1(x)
         x = self.conv2(x)
         x = self.conv3(x)
@@ -118,20 +95,13 @@ class CatCNN(nn.Module):
         return x
 
     def get_num_params(self):
-        """Get total number of parameters"""
         return sum(p.numel() for p in self.parameters())
 
     def get_trainable_params(self):
-        """Get number of trainable parameters"""
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
 
 
 class ResNetTransfer(nn.Module):
-    """
-    Transfer learning model using ResNet50 pretrained on ImageNet.
-
-    Strategy: Fine-tune all layers (not feature extraction only)
-    """
 
     def __init__(self, num_classes=8, freeze_backbone=False):
         super(ResNetTransfer, self).__init__()
@@ -152,30 +122,16 @@ class ResNetTransfer(nn.Module):
         )
 
     def forward(self, x):
-        """Forward pass"""
         return self.resnet(x)
 
     def get_num_params(self):
-        """Get total number of parameters"""
         return sum(p.numel() for p in self.parameters())
 
     def get_trainable_params(self):
-        """Get number of trainable parameters"""
         return sum(p.numel() for p in self.parameters() if p.requires_grad)
 
 
 def get_model(model_type='from_scratch', num_classes=8, **kwargs):
-    """
-    Factory function to get model by type.
-
-    Args:
-        model_type: 'from_scratch' or 'transfer_learning'
-        num_classes: Number of output classes
-        **kwargs: Additional arguments for model construction
-
-    Returns:
-        model: PyTorch model
-    """
     if model_type == 'from_scratch':
         return CatCNN(num_classes=num_classes, **kwargs)
     elif model_type == 'transfer_learning':

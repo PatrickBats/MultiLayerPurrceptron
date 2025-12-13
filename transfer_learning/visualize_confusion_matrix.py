@@ -1,9 +1,3 @@
-"""
-Generate and Visualize Confusion Matrix for Transfer Learning Model
-
-Creates a heatmap showing which breeds are confused with each other.
-"""
-
 import sys
 from pathlib import Path
 sys.path.append(str(Path(__file__).parent.parent))
@@ -23,7 +17,6 @@ from shared.data_augmentation import CatBreedAugmentation
 
 
 def load_model(checkpoint_path, num_classes=8):
-    """Load trained model from checkpoint"""
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
 
     checkpoint = torch.load(checkpoint_path, map_location=device)
@@ -53,7 +46,6 @@ def load_model(checkpoint_path, num_classes=8):
 
 
 def compute_confusion_matrix(model, dataloader, device, num_classes=8):
-    """Compute confusion matrix"""
     confusion_matrix = np.zeros((num_classes, num_classes), dtype=int)
 
     with torch.no_grad():
@@ -73,8 +65,6 @@ def compute_confusion_matrix(model, dataloader, device, num_classes=8):
 
 
 def plot_confusion_matrix(confusion_matrix, breed_names, output_path, normalize=False):
-    """Plot and save confusion matrix heatmap"""
-
     if normalize:
         # Normalize by row (true label) to show percentages
         confusion_matrix_norm = confusion_matrix.astype('float') / confusion_matrix.sum(axis=1)[:, np.newaxis]
@@ -118,7 +108,6 @@ def plot_confusion_matrix(confusion_matrix, breed_names, output_path, normalize=
 
 
 def analyze_confusions(confusion_matrix, breed_names):
-    """Analyze most confused pairs"""
     print("\n" + "=" * 60)
     print("=" * 60)
 
@@ -164,8 +153,6 @@ def analyze_confusions(confusion_matrix, breed_names):
 
 
 def main():
-    """Main function"""
-
     print("=" * 60)
     print("CONFUSION MATRIX VISUALIZATION")
     print("=" * 60)

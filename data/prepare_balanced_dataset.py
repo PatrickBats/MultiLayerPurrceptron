@@ -1,13 +1,3 @@
-"""
-Prepare Balanced Dataset for Cat Breed Classification
-
-This script:
-1. Filters to only overlapping breeds (8 breeds)
-2. Balances dataset to 2,500 samples per breed
-3. Splits into train/val/test sets (70/15/15)
-4. Creates CSV files for each split
-"""
-
 import pandas as pd
 import os
 from pathlib import Path
@@ -45,7 +35,6 @@ OUTPUT_DIR.mkdir(exist_ok=True)
 
 
 def load_and_filter_data():
-    """Load both datasets and filter to overlapping breeds only"""
     print("Loading datasets...")
 
     # Load OxfordIIT
@@ -108,7 +97,6 @@ def balance_dataset(df):
 
 
 def split_dataset(df):
-    """Split into train/val/test sets with stratification"""
     print(f"\nSplitting dataset: {TRAIN_RATIO}/{VAL_RATIO}/{TEST_RATIO}")
 
     random.seed(RANDOM_SEED)
@@ -143,7 +131,6 @@ def split_dataset(df):
 
 
 def save_splits(train_df, val_df, test_df):
-    """Save train/val/test splits to CSV files"""
     print(f"\nSaving splits to {OUTPUT_DIR}...")
 
     train_df.to_csv(OUTPUT_DIR / 'train.csv', index=False)

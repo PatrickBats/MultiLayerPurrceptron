@@ -1,9 +1,3 @@
-"""
-GradCAM Visualization for Cat Breed Classification
-
-Load trained model and visualize what the CNN is looking at.
-"""
-
 import torch
 import torch.nn.functional as F
 import numpy as np
@@ -21,14 +15,8 @@ from shared.data_augmentation import CatBreedAugmentation
 
 
 class GradCAM:
-    """GradCAM visualization for CNNs"""
 
     def __init__(self, model, target_layer):
-        """
-        Args:
-            model: Trained CNN model
-            target_layer: Layer to visualize (e.g., model.conv5)
-        """
         self.model = model
         self.target_layer = target_layer
         self.gradients = None
@@ -39,25 +27,12 @@ class GradCAM:
         target_layer.register_backward_hook(self.save_gradient)
 
     def save_activation(self, module, input, output):
-        """Hook to save activations"""
         self.activations = output.detach()
 
     def save_gradient(self, module, grad_input, grad_output):
-        """Hook to save gradients"""
         self.gradients = grad_output[0].detach()
 
     def generate_cam(self, input_image, target_class=None):
-        """
-        Generate GradCAM heatmap
-
-        Args:
-            input_image: Preprocessed image tensor [1, 3, 224, 224]
-            target_class: Class to visualize (None = predicted class)
-
-        Returns:
-            cam: GradCAM heatmap [224, 224]
-            predicted_class: Model's prediction
-        """
         # Get device from input
         device = input_image.device
 
@@ -98,17 +73,6 @@ class GradCAM:
 
 
 def load_trained_model(checkpoint_path, num_classes=8):
-    """
-    Load trained model from checkpoint
-
-    Args:
-        checkpoint_path: Path to .pth checkpoint file
-        num_classes: Number of output classes
-
-    Returns:
-        model: Loaded model in eval mode
-        checkpoint: Full checkpoint dict (includes config, metrics)
-    """
     # Load checkpoint
     checkpoint = torch.load(checkpoint_path, map_location='cpu')
 
@@ -119,22 +83,10 @@ def load_trained_model(checkpoint_path, num_classes=8):
     model.load_state_dict(checkpoint['model_state_dict'])
     model.eval()
 
-    print(f"Loaded model from epoch {checkpoint['epoch']}")
-    print(f"Best validation accuracy: {checkpoint['best_val_acc']:.2f}%")
-
     return model, checkpoint
 
 
 def visualize_gradcam(image_path, model, breed_names, save_path=None):
-    """
-    Visualize GradCAM for a single image
-
-    Args:
-        image_path: Path to cat image
-        model: Trained model
-        breed_names: List of breed names (in order of class indices)
-        save_path: Optional path to save visualization
-    """
     device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     model = model.to(device)
 
@@ -180,7 +132,6 @@ def visualize_gradcam(image_path, model, breed_names, save_path=None):
     axes[2].set_title(f'Overlay\nPredicted: {breed_names[predicted_class]}')
     axes[2].axis('off')
 
-    # Add probability bars
     plt.figure(figsize=(10, 6))
     y_pos = np.arange(len(breed_names))
     probs_np = probs.cpu().numpy()
@@ -200,15 +151,6 @@ def visualize_gradcam(image_path, model, breed_names, save_path=None):
 
 
 def visualize_multiple_images(image_paths, model, breed_names, save_dir=None):
-    """
-    Visualize GradCAM for multiple images
-
-    Args:
-        image_paths: List of image paths
-        model: Trained model
-        breed_names: List of breed names
-        save_dir: Optional directory to save visualizations
-    """
     if save_dir:
         Path(save_dir).mkdir(parents=True, exist_ok=True)
 
@@ -223,16 +165,6 @@ def visualize_multiple_images(image_paths, model, breed_names, save_dir=None):
 
 
 def get_random_images_per_breed(csv_path='../data/processed_data/test.csv', num_per_breed=1):
-    """
-    Get random images for each breed from CSV
-
-    Args:
-        csv_path: Path to CSV file (train.csv, val.csv, or test.csv)
-        num_per_breed: Number of random images to pick per breed
-
-    Returns:
-        selected_images: Dict mapping breed name to list of image paths
-    """
     import pandas as pd
 
     # Load CSV
@@ -252,18 +184,6 @@ def get_random_images_per_breed(csv_path='../data/processed_data/test.csv', num_
 def visualize_all_breeds(checkpoint_path='experiments/from_scratch_5layer/checkpoints/best.pth',
                          csv_path='../data/processed_data/test.csv',
                          save_dir='gradcam_visualizations'):
-    """
-    Automatically visualize GradCAM for random image from each breed
-
-    Args:
-        checkpoint_path: Path to trained model checkpoint
-        csv_path: Path to CSV with image paths (test.csv recommended)
-        save_dir: Directory to save visualizations
-    """
-    print("=" * 60)
-    print("GRADCAM VISUALIZATION - ALL BREEDS")
-    print("=" * 60)
-
     # Breed names (must match training order)
     breed_names = [
         'Bengal',
@@ -310,18 +230,7 @@ def visualize_all_breeds(checkpoint_path='experiments/from_scratch_5layer/checkp
         else:
             print(f"\n  ⚠️ Skipping {breed}: No images found")
 
-    print("\n" + "=" * 60)
-    print("=" * 60)
-    print(f"Check {save_dir}/ for all visualizations")
-
-
 def main():
-    """Main function - automatically visualize all breeds"""
-
-    print("=" * 60)
-    print("GRADCAM VISUALIZATION")
-    print("=" * 60)
-
     # Run automatic visualization for all breeds
     visualize_all_breeds(
         checkpoint_path='experiments/from_scratch_5layer/checkpoints/best.pth',
